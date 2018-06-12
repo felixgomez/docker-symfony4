@@ -31,7 +31,7 @@ services:
       container_name: php-fpm
       volumes:
         - ${SYMFONY_APP_PATH}:/application
-        - ../infrastructure/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+        - ../infrastructure/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/infrastructure-overrides.ini
         - ./var:/application/var
         - ../application:/application
 
