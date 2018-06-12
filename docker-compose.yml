@@ -34,6 +34,8 @@ services:
         - ../infrastructure/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/infrastructure-overrides.ini
         - ./var:/application/var
         - ../application:/application
+      environment:
+        XDEBUG_CONFIG: remote_host=${XDEBUG_REMOTE_HOST} remote_enable=${XDEBUG_REMOTE_ENABLE}
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin

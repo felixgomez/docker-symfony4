@@ -17,6 +17,33 @@ Complete stack run with docker and [docker-compose](https://docs.docker.com/comp
     $ docker-compose up -d
     ```
 
+## Activate xDebug
+
+Open your .env and find
+
+```
+# xDebug
+XDEBUG_REMOTE_ENABLE=0
+XDEBUG_REMOTE_HOST=your-local-ip
+```
+
+Change ```XDEBUG_REMOTE_ENABLE=0``` to ```XDEBUG_REMOTE_ENABLE=1``` and ```your-local-ip```
+with the local IP of your computer, in my case ```192.168.0.12```. The result is something like:
+
+```
+# xDebug
+XDEBUG_REMOTE_ENABLE=1
+XDEBUG_REMOTE_HOST=192.168.0.12
+```
+
+
+Restart the php-fpm container:
+
+```bash
+$ docker stop php-fpm
+$ docker-compose up -d
+```
+
 ## Useful commands
 
 ```bash
