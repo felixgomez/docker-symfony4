@@ -23,6 +23,7 @@ services:
       container_name: php-webserver
       volumes:
           - ../infrastructure/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+          - ${SYMFONY_APP_PATH}:/application
       ports:
        - "8080:80"
 
