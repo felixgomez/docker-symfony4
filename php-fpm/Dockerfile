@@ -3,7 +3,7 @@ WORKDIR "/application"
 
 # Install git, unzip
 RUN apt-get update \
-    && apt-get -y install git unzip 
+    && apt-get -y install git unzip vim
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -12,7 +12,19 @@ RUN apt-get update \
     && apt-get install -y libicu-dev \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* \
     && docker-php-ext-install intl
-    
+
+# Install zip (phpUnit requirement)
+RUN apt-get update && \
+    apt-get install -y \
+    zlib1g-dev \
+    && docker-php-ext-install zip
+
+# install gd mbstring pdo
+RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libpq-dev \
+ 	&& rm -rf /var/lib/apt/lists/* \
+ 	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
+	&& docker-php-ext-install gd mbstring pdo pdo_mysql pdo_pgsql
+
 # redis (as example of another extension from downloaded source code)
 RUN curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/3.1.6.tar.gz \
     && tar xfz /tmp/redis.tar.gz \
