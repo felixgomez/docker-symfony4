@@ -36,13 +36,61 @@ XDEBUG_REMOTE_ENABLE=1
 XDEBUG_REMOTE_HOST=192.168.0.12
 ```
 
-
 Restart the php-fpm container:
 
 ```bash
 $ docker stop php-fpm
 $ docker-compose up -d
 ```
+
+### Connect phpStorm with xDebug
+
+#### Add docker
+
+In Settings => Build, Execution, Deployment => Docker
+
+Create new:
+
+- Name: Docker
+- Connect to Docker daemon with: TCP Socker and Engine API URL tcp:localhost:2375
+
+If you are in Windows go to Docker Settings, General and check the option 
+"Expose daemon on tcp://localhost:2375 without TLD" and restart docker
+
+#### Create the remote CLI Interpreter
+
+In Settings => Languages & Frameworks => PHP 
+
+Create a new CLI Interpreter:
+
+- Name: Remote PHP 7.2
+- Server: Docker
+- Configuration file: the route to the docker-compose.yml
+- Service: php-fpm
+
+phpStorm autodetect php as PHP executable, the PHP version and the debugger.
+
+#### Create the remote server
+
+In Settings => Languages & Frameworks => PHP => Servers
+
+You must create a new server:
+
+- Name: localhost
+- Host: http://localhost
+- Port: 8080
+- Debugger: Xdebug
+
+And you can set manual mapping for application folder
+
+#### Activate Debug
+
+Go to Settings => Languages & Frameworks => Debug
+
+Check the pre-configuration steps. When all are OK, go to localhost:8080 in your browser, 
+antivate the debug in the Xdebug extension, refresh the webpage and go.
+
+If you change the serverName, you must change the value of ```XDEBUG_SERVER_NAME``` in your .env file
 
 ## Useful commands
 
