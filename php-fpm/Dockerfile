@@ -19,6 +19,11 @@ RUN apt-get update && \
     zlib1g-dev \
     && docker-php-ext-install zip
 
+# Install mysql
+RUN docker-php-ext-install mysqli
+
+RUN apt-get update && apt-get install -y mysql-client && rm -rf /var/lib/apt
+
 # install gd mbstring pdo
 RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libpq-dev \
  	&& rm -rf /var/lib/apt/lists/* \
