@@ -17,6 +17,15 @@ Complete stack run with docker and [docker-compose](https://docs.docker.com/comp
     $ docker-compose up -d
     ```
 
+## Environments
+
+You can configure some environments:
+
+- Normal enviroment (DOCKER_ENVIRONMENT=)
+- Debug enviroment (DOCKER_ENVIRONMENT=Debug)
+- Blackfire environment (DOCKER_ENVIRONMENT=Blackfire)
+- Use Apache instead Nginx (DOCKER_ENVIRONMENT=Apache)
+
 ## Activate xDebug
 
 Open your .env and find
@@ -36,11 +45,17 @@ XDEBUG_REMOTE_ENABLE=1
 XDEBUG_REMOTE_HOST=192.168.0.12
 ```
 
-Restart the php-fpm container:
+Activate de Debug enviroment
+
+```
+DOCKER_ENVIRONMENT=Debug
+```
+
+Restart the php-fpm container forcing the rebuild:
 
 ```bash
 $ docker stop php-fpm
-$ docker-compose up -d
+$ docker-compose up -d --build
 ```
 
 ### Connect phpStorm with xDebug
@@ -91,6 +106,49 @@ Check the pre-configuration steps. When all are OK, go to localhost:8080 in your
 antivate the debug in the Xdebug extension, refresh the webpage and go.
 
 If you change the serverName, you must change the value of ```XDEBUG_SERVER_NAME``` in your .env file
+
+## Activate Blackfire
+
+
+Open your .env and activate the Blackfire environment
+
+```
+DOCKER_ENVIRONMENT=Blackfire
+```
+
+You must be register at https://blackfire.io and go to your credentials page:
+
+https://blackfire.io/my/settings/credentials
+
+Copy the client and server credentials and paste them in the Blackfire section:
+
+```
+# Blackfire (blackfire environment)
+BLACKFIRE_CLIENT_ID=YOUR_CLIENT_ID
+BLACKFIRE_CLIENT_TOKEN=YOUR_CLIENT_TOKEN
+BLACKFIRE_SERVER_ID=YOUR_SERVER_ID
+BLACKFIRE_SERVER_TOKEN=YOUR_SERVER_TOKEN
+```
+
+Restart the php-fpm container forcing the rebuild:
+
+```bash
+$ docker stop php-fpm
+$ docker-compose up -d --build
+```
+
+After the fisrt start in Blackfire mode you must restart the service to register the agent:
+
+```
+$ docker-compose exec php-fpm bash
+$ /etc/init.d/blackfire-agent restart
+```
+
+Now you must install the chrome extension (or firefox if is your browser):
+
+https://chrome.google.com/webstore/detail/blackfire-companion/miefikpgahefdbcgoiicnmpbeeomffld
+
+With this extension installed, you can go to your site (http://localhost:8080) and run the profile easily
 
 ## Useful commands
 

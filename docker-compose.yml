@@ -22,23 +22,31 @@ services:
       image: nginx:alpine
       container_name: php-webserver
       volumes:
-          - ../infrastructure/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+          - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
           - ${SYMFONY_APP_PATH}:/application
       ports:
        - "8080:80"
 
     php-fpm:
-      build: php-fpm
+      image: php-fpm
+      build:
+        context: .
+        dockerfile: php-fpm/Dockerfile${DOCKER_ENVIRONMENT}
       container_name: php-fpm
       volumes:
         - ${SYMFONY_APP_PATH}:/application
-        - ../infrastructure/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/infrastructure-overrides.ini
+        - ./php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/infrastructure-overrides.ini
         - ./var:/application/var
         - ../application:/application
       links:
         - mysql:php-mysql
       environment:
         XDEBUG_CONFIG: remote_host=${XDEBUG_REMOTE_HOST} remote_enable=${XDEBUG_REMOTE_ENABLE}
+        PHP_IDE_CONFIG: serverName=${XDEBUG_SERVER_NAME}
+        BLACKFIRE_CLIENT_ID: ${BLACKFIRE_CLIENT_ID}
+        BLACKFIRE_CLIENT_TOKEN: ${BLACKFIRE_CLIENT_TOKEN}
+        BLACKFIRE_SERVER_ID: ${BLACKFIRE_SERVER_ID}
+        BLACKFIRE_SERVER_TOKEN: ${BLACKFIRE_SERVER_TOKEN}
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
@@ -51,3 +59,19 @@ services:
             - PMA_HOST=php-mysql
         links:
             - mysql:php-mysql
+
+    # Alternative PHP:7.2.6 + apache
+    #php:
+    #    build: php
+    #    image: php:7.2.6-apache-stretch
+    #    container_name: php
+    #    volumes:
+    #        - ${SYMFONY_APP_PATH}:/application
+    #        - ./var:/application/var
+    #        - ../application:/application
+    #    links:
+    #        - mysql:php-mysql
+    #    ports:
+    #        - "8083:80"
+
+
