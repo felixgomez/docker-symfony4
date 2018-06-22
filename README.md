@@ -1,6 +1,6 @@
 # Docker example for Symfony4
 
-Complete stack run with docker and [docker-compose](https://docs.docker.com/compose/) with **PHP7.2-FPM - NGINX - MySQL 8** and **REDIS**.
+Complete stack run with docker and [docker-compose](https://docs.docker.com/compose/) with **PHP7.2-FPM - NGINX - MySQL 5.7** and **REDIS**... **Apache2** option available
 
 ## Installation
 
