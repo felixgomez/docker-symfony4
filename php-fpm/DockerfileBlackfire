@@ -38,8 +38,39 @@ RUN curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/3.
     && mv phpredis-3.1.6/* /usr/src/php/ext/redis/ \
     && docker-php-ext-install redis
 
+# install blackfire
+ENV BLACKFIRE_LOG_LEVEL 1
+ENV BLACKFIRE_LOG_FILE /var/log/blackfire/blackfire.log
+ENV BLACKFIRE_SOCKET unix:///var/run/blackfire/agent.sock
+
+RUN apt-get update && apt-get install -y wget gnupg
+
+RUN wget -O - https://packagecloud.io/gpg.key | apt-key add - && \
+    echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list
+
+RUN apt-get update && \
+    apt-get install -y \
+    blackfire-agent \
+    blackfire-php
+
+RUN \
+    version=$(php -r "echo PHP_MAJOR_VERSION, PHP_MINOR_VERSION;") \
+    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/${version} \
+    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
+    && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so
+
+COPY php-fpm/blackfire-agent.ini /etc/blackfire/agent
+COPY php-fpm/blackfire-php.ini /usr/local/etc/php/conf.d/92-blackfire-config.ini
+COPY php-fpm/blackfire-php.ini /usr/local/etc/php/conf.d/92-blackfire-config.ini
+COPY php-fpm/blackfire-run.sh /blackfire-run.sh
+
+RUN /etc/init.d/blackfire-agent restart
+
 # Fix permission problems
 RUN usermod -u 1000 www-data 
 
 RUN echo 'alias ll="ls -l"' >> ~/.bashrc
 RUN echo 'alias sf="php bin/console"' >> ~/.bashrc
+
+# ENTRYPOINT ["/bin/bash", "/blackfire-run.sh"]
+
