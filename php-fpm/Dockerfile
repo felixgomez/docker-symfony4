@@ -16,13 +16,11 @@ RUN apt-get update \
 # Install zip (phpUnit requirement)
 RUN apt-get update && \
     apt-get install -y \
-    zlib1g-dev \
+    libzip-dev \
     && docker-php-ext-install zip
 
 # Install mysql
 RUN docker-php-ext-install mysqli
-
-RUN apt-get update && apt-get install -y mysql-client && rm -rf /var/lib/apt
 
 # install gd mbstring pdo
 RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libpq-dev \
