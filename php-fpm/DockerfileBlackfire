@@ -1,6 +1,11 @@
 FROM php:7.2-fpm
 WORKDIR "/application"
 
+ARG LOCAL_UID
+ARG LOCAL_GID
+# Fix permission problems
+RUN usermod -u ${LOCAL_UID:-33} www-data && groupmod -g ${LOCAL_GID:-33} www-data
+
 # Install git, unzip
 RUN apt-get update \
     && apt-get -y install git unzip vim
@@ -65,9 +70,6 @@ COPY php-fpm/blackfire-php.ini /usr/local/etc/php/conf.d/92-blackfire-config.ini
 COPY php-fpm/blackfire-run.sh /blackfire-run.sh
 
 RUN /etc/init.d/blackfire-agent restart
-
-# Fix permission problems
-RUN usermod -u 1000 www-data 
 
 RUN echo 'alias ll="ls -l"' >> ~/.bashrc
 RUN echo 'alias sf="php bin/console"' >> ~/.bashrc

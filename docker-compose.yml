@@ -32,6 +32,9 @@ services:
       build:
         context: .
         dockerfile: php-fpm/Dockerfile${DOCKER_ENVIRONMENT}
+        args:
+          - LOCAL_UID=${LOCAL_UID}
+          - LOCAL_GID=${LOCAL_GID}
       container_name: php-fpm
       volumes:
         - ${SYMFONY_APP_PATH}:/application
