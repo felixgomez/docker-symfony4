@@ -1,6 +1,11 @@
 FROM php:7.2-fpm
 WORKDIR "/application"
 
+ARG LOCAL_UID
+ARG LOCAL_GID
+# Fix permission problems
+RUN usermod -u ${LOCAL_UID:-33} www-data && groupmod -g ${LOCAL_GID:-33} www-data
+
 # Install git, unzip
 RUN apt-get update \
     && apt-get -y install git unzip vim
@@ -36,10 +41,7 @@ RUN curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/3.
     && rm -r /tmp/redis.tar.gz \
     && mkdir -p /usr/src/php/ext/redis \
     && mv phpredis-3.1.6/* /usr/src/php/ext/redis/ \
-    && docker-php-ext-install redis
-
-# Fix permission problems
-RUN usermod -u 1000 www-data 
+    && docker-php-ext-install redis 
 
 RUN echo 'alias ll="ls -l"' >> ~/.bashrc
 RUN echo 'alias sf="php bin/console"' >> ~/.bashrc
