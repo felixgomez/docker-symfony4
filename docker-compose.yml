@@ -40,7 +40,6 @@ services:
         - ${SYMFONY_APP_PATH}:/application
         - ./php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/infrastructure-overrides.ini
         - ${SYMFONY_APP_PATH}/var:/application/var
-        - ${SYMFONY_APP_PATH}:/application
       links:
         - mysql:php-mysql
       environment:
